@@ -59,7 +59,7 @@ namespace ImageMarkOut
             return gistogram;
         }
 
-        static public int[] GetBlackWhitePixelArray(Bitmap image, int threshold)
+        static public int[] GetBlackWhitePixelArray(Bitmap image, int threshold, int k)
         {
             int black = Color.Black.ToArgb();
             int white = Color.White.ToArgb();
@@ -67,7 +67,7 @@ namespace ImageMarkOut
             return ImageProcessing.GetGreyPixelArray(image)
                 .Select(greyPixel => new
                 {
-                    bwPixel = (greyPixel > threshold + 100)
+                    bwPixel = (greyPixel > threshold + k)
                         ? black
                         : white
                 })
@@ -75,7 +75,7 @@ namespace ImageMarkOut
                 .ToArray();
         }
 
-        static public int[] GetBlackWhitePixelArray(Bitmap image)
+        static public int[] GetBlackWhitePixelArray(Bitmap image, int k)
         {
             var gistogram = GetGistogram(image);
             int threshold = 0;
@@ -86,7 +86,7 @@ namespace ImageMarkOut
             }
             threshold /= image.Width * image.Height;
 
-            return GetBlackWhitePixelArray(image, threshold);
+            return GetBlackWhitePixelArray(image, threshold, k);
         }
 
         #region Converters

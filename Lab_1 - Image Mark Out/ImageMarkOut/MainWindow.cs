@@ -76,7 +76,7 @@ namespace ImageMarkOut
         {
             processingToolStripMenuItem.Enabled = false;
 
-            workerThread = new Thread(new ParameterizedThreadStart(Worker));
+            workerThread = new Thread(new ParameterizedThreadStart(Worker), Int32.MaxValue / 4);
             workerThread.Start(baseImage);
         }
         #endregion
@@ -85,7 +85,7 @@ namespace ImageMarkOut
 
         private void Worker(Object baseImage)
         {
-            var bwArray = ImageProcessing.GetBlackWhitePixelArray(baseImage as Bitmap);
+            var bwArray = ImageProcessing.GetBlackWhitePixelArray(baseImage as Bitmap, 10);
             Invoke(reloadImage, ImageProcessing.GetImage(bwArray, width, height));
 
             var markOutArray = MarkOut(bwArray);
@@ -103,37 +103,40 @@ namespace ImageMarkOut
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (doubleBinArray[x, y] != -1 && markOutArray[x, y] == 0)
+                    if (doubleBinArray[x, y] == -1 && markOutArray[x, y] == 0)
                     {
-                        RecursiveMarkOut(doubleBinArray, ref markOutArray, y * width + x, x, y);
+                        RecursiveMarkOut(doubleBinArray, ref markOutArray, y * width + x, x, y, 0);
+                        //RecursiveMarkOut(doubleBinArray, ref markOutArray, 1000, 0, 0, 0);
                     }
                 }
             }
             return ImageProcessing.DoubleArrayToSingle(markOutArray, width);
         }
 
-        private void RecursiveMarkOut(int[,] binArray, ref int[,] markOutArray, int color, int x, int y)
+        private void RecursiveMarkOut(int[,] binArray, ref int[,] markOutArray, int color, int x, int y, int deep)
         {
-            if (binArray[x, y] != -1 && markOutArray[x, y] == 0)
+            if (deep > 100) return;
+
+            if (binArray[x, y] == -1 && markOutArray[x, y] == 0)
             {
                 markOutArray[x, y] = color;
 
                 if (x + 1 < width)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x + 1, y);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, x + 1, y, deep + 1);
                 if (x + 1 < width && y + 1 < height)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x + 1, y + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, x + 1, y + 1, deep + 1);
                 if (y + 1 < height)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x, y + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, x, y + 1, deep + 1);
                 if (x > 0 && y + 1 < height)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x - 1, y + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, x - 1, y + 1, deep + 1);
                 if (x > 0)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x - 1, y);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, x - 1, y, deep + 1);
                 if (x > 0 && y > 0)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x - 1, y - 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, x - 1, y - 1, deep + 1);
                 if (y > 0)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x, y - 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, x, y - 1, deep + 1);
                 if (x + 1 < width && y > 0)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x + 1, y - 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, x + 1, y - 1, deep + 1);
             }
         }
 
