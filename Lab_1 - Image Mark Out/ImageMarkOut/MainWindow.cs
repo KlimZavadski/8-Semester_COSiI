@@ -15,7 +15,7 @@ namespace ImageMarkOut
     {
         private String fileName;
         Dictionary<int, int> gistogram;
-        Bitmap baseImage;
+        int[] baseImage;
         int width;
         int height;
         
@@ -37,18 +37,17 @@ namespace ImageMarkOut
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             pictureBox_Result.Image = null;
-            if (baseImage != null)
-            {
-                baseImage.Dispose();
-            }
+            baseImage = null;
             fileName = (sender as OpenFileDialog).FileName;
 
-            baseImage = Bitmap.FromFile(fileName) as Bitmap;
-            pictureBox_Base.Image = baseImage as Image;
-            width = baseImage.Width;
-            height = baseImage.Height;
+            var image = Bitmap.FromFile(fileName) as Bitmap;
+            pictureBox_Base.Image = image as Image;
+            width = image.Width;
+            height = image.Height;
 
-            gistogram = ImageProcessing.GetGistogram(baseImage);
+            baseImage = ImageProcessor.ToPixelArray(image);
+            gistogram = ImageProcessor.GetGistogram(baseImage);
+            
             zedGraphControl.GraphPane.CurveList.Clear();
             zedGraphControl.GraphPane.AddCurve("",
                 gistogram.Keys
@@ -85,58 +84,55 @@ namespace ImageMarkOut
 
         private void Worker(Object baseImage)
         {
-            var bwArray = ImageProcessing.GetBlackWhitePixelArray(baseImage as Bitmap, 10);
-            Invoke(reloadImage, ImageProcessing.GetImage(bwArray, width, height));
+            var bwArray = ImageProcessor.ToBlackWhitePixelArray(baseImage as int[], 0);
+            var bwArrayWithMedianFilter = ImageProcessor.MedianFiter(ImageProcessor.ToDoubleArray(bwArray, width), 5, width, height);
+            Invoke(reloadImage, ImageProcessor.ToImage(bwArrayWithMedianFilter, width, height));
 
-            var markOutArray = MarkOut(bwArray);
-            var markOutImage = ImageProcessing.GetImage(markOutArray, width, height);
-            //Invoke(reloadImage, markOutImage.Clone());
-            markOutImage.Save("out.jpg", ImageFormat.Jpeg);
+            var markOutArray = MarkOut(bwArrayWithMedianFilter);
+            ImageProcessor.ToImage(markOutArray, width, height).Save("out.jpg", ImageFormat.Jpeg);
         }
 
-        private int[] MarkOut(int[] binArray)
+        private int[,] MarkOut(int[,] binArray)
         {
-            int[,] markOutArray = new int[width, height];
-            int[,] doubleBinArray = ImageProcessing.SingleArrayToDouble(binArray, width);
+            var markOutArray = new int[height, width];
 
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if (doubleBinArray[x, y] == -1 && markOutArray[x, y] == 0)
+                    if (binArray[y, x] != -1 && markOutArray[y, x] == 0)  // When object was found and didn't paint.
                     {
-                        RecursiveMarkOut(doubleBinArray, ref markOutArray, y * width + x, x, y, 0);
-                        //RecursiveMarkOut(doubleBinArray, ref markOutArray, 1000, 0, 0, 0);
+                        RecursiveMarkOut(binArray, ref markOutArray, y * width + x + 100, y, x, 0);
                     }
                 }
             }
-            return ImageProcessing.DoubleArrayToSingle(markOutArray, width);
+            return markOutArray;
         }
 
-        private void RecursiveMarkOut(int[,] binArray, ref int[,] markOutArray, int color, int x, int y, int deep)
+        private void RecursiveMarkOut(int[,] binArray, ref int[,] markOutArray, int color, int y, int x, int deep)
         {
-            if (deep > 100) return;
+            if (++deep > 20000) return;
 
-            if (binArray[x, y] == -1 && markOutArray[x, y] == 0)
+            if (binArray[y, x] != -1 && markOutArray[y, x] == 0)
             {
-                markOutArray[x, y] = color;
+                markOutArray[y, x] = color;
 
                 if (x + 1 < width)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x + 1, y, deep + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, y, x + 1, deep);
                 if (x + 1 < width && y + 1 < height)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x + 1, y + 1, deep + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, y + 1, x + 1, deep);
                 if (y + 1 < height)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x, y + 1, deep + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, y + 1, x, deep);
                 if (x > 0 && y + 1 < height)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x - 1, y + 1, deep + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, y + 1, x - 1, deep);
                 if (x > 0)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x - 1, y, deep + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, y, x - 1, deep);
                 if (x > 0 && y > 0)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x - 1, y - 1, deep + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, y - 1, x - 1, deep);
                 if (y > 0)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x, y - 1, deep + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, y - 1, x, deep);
                 if (x + 1 < width && y > 0)
-                    RecursiveMarkOut(binArray, ref markOutArray, color, x + 1, y - 1, deep + 1);
+                    RecursiveMarkOut(binArray, ref markOutArray, color, y - 1, x + 1, deep);
             }
         }
 
