@@ -14,10 +14,10 @@ namespace ImageMarkOut
     public partial class MainWindow : Form
     {
         private String fileName;
-        Dictionary<int, int> gistogram;
-        int[] baseImage;
-        int width;
-        int height;
+        private Dictionary<int, int> gistogram;
+        private int[] baseImage;
+        private int width;
+        private int height;
         
         private Thread workerThread;
         private delegate void ReloadImageDelegate(Bitmap image);
