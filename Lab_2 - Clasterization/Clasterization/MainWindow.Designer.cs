@@ -44,6 +44,7 @@
             this.tabPage_Classterize = new System.Windows.Forms.TabPage();
             this.textBox_Classterize = new System.Windows.Forms.TextBox();
             this.trackBar_Coeff = new System.Windows.Forms.TrackBar();
+            this.textBox_Count = new System.Windows.Forms.TextBox();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Result)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Base)).BeginInit();
@@ -105,13 +106,13 @@
             // 
             this.zedGraphControl.Location = new System.Drawing.Point(0, 27);
             this.zedGraphControl.Name = "zedGraphControl";
-            this.zedGraphControl.ScrollGrace = 0D;
-            this.zedGraphControl.ScrollMaxX = 0D;
-            this.zedGraphControl.ScrollMaxY = 0D;
-            this.zedGraphControl.ScrollMaxY2 = 0D;
-            this.zedGraphControl.ScrollMinX = 0D;
-            this.zedGraphControl.ScrollMinY = 0D;
-            this.zedGraphControl.ScrollMinY2 = 0D;
+            this.zedGraphControl.ScrollGrace = 0;
+            this.zedGraphControl.ScrollMaxX = 0;
+            this.zedGraphControl.ScrollMaxY = 0;
+            this.zedGraphControl.ScrollMaxY2 = 0;
+            this.zedGraphControl.ScrollMinX = 0;
+            this.zedGraphControl.ScrollMinY = 0;
+            this.zedGraphControl.ScrollMinY2 = 0;
             this.zedGraphControl.Size = new System.Drawing.Size(190, 187);
             this.zedGraphControl.TabIndex = 2;
             // 
@@ -190,16 +191,26 @@
             this.trackBar_Coeff.Location = new System.Drawing.Point(627, -1);
             this.trackBar_Coeff.Maximum = 40;
             this.trackBar_Coeff.Name = "trackBar_Coeff";
-            this.trackBar_Coeff.Size = new System.Drawing.Size(236, 45);
+            this.trackBar_Coeff.Size = new System.Drawing.Size(187, 45);
             this.trackBar_Coeff.TabIndex = 5;
             this.trackBar_Coeff.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar_Coeff.Value = 10;
+            this.trackBar_Coeff.ValueChanged += new System.EventHandler(this.trackBar_Coeff_ValueChanged);
+            // 
+            // textBox_Count
+            // 
+            this.textBox_Count.Location = new System.Drawing.Point(811, 0);
+            this.textBox_Count.Multiline = true;
+            this.textBox_Count.Name = "textBox_Count";
+            this.textBox_Count.Size = new System.Drawing.Size(52, 24);
+            this.textBox_Count.TabIndex = 6;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(865, 375);
+            this.Controls.Add(this.textBox_Count);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.trackBar_Coeff);
             this.Controls.Add(this.zedGraphControl);
@@ -242,5 +253,6 @@
         private System.Windows.Forms.TextBox textBox_Info;
         private System.Windows.Forms.TabPage tabPage_Classterize;
         private System.Windows.Forms.TextBox textBox_Classterize;
+        private System.Windows.Forms.TextBox textBox_Count;
     }
 }

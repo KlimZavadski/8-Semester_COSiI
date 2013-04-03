@@ -44,6 +44,8 @@ namespace Clasterization
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             pictureBox_Result.Image = null;
+            textBox_Info.Text = String.Empty;
+            textBox_Classterize.Text = String.Empty;
             fileName = (sender as OpenFileDialog).FileName;
             var image = Bitmap.FromFile(fileName) as Bitmap;
             pictureBox_Base.Image = image as Image;
@@ -109,6 +111,11 @@ namespace Clasterization
         {
             binarizeToolStripMenuItem_Click(null, null);
         }
+
+        private void trackBar_Coeff_ValueChanged(object sender, EventArgs e)
+        {
+            textBox_Count.Text = trackBar_Coeff.Value.ToString();
+        }
         #endregion
 
         #region Private mothods
@@ -118,7 +125,7 @@ namespace Clasterization
             switch (param as String)
             {
                 case "Binarize":
-                    imageProcessor.Image = imageProcessor.ToBlackWhitePixelArray(baseImage, 10);//trackBar_Coeff.Value);
+                    imageProcessor.Image = imageProcessor.ToBlackWhitePixelArray(baseImage, trackBar_Coeff.Value);
                     Invoke(reloadImageDelegate, imageProcessor.ToImage());
                     imageProcessor.MedianFiter(null, 5);
                     Invoke(reloadImageDelegate, imageProcessor.ToImage());
@@ -126,7 +133,7 @@ namespace Clasterization
                     Invoke(reloadImageDelegate, imageProcessor.ToImage());
                     break;
                 case "Classterize":
-                    imageProcessor.Image = imageProcessor.Clasterize(markOutImage, 2);//trackBar_Coeff.Value);
+                    imageProcessor.Image = imageProcessor.Clasterize(markOutImage, trackBar_Coeff.Value);
                     Invoke(reloadImageDelegate, imageProcessor.ToImage());
                     ShowInfo();
                     break;
