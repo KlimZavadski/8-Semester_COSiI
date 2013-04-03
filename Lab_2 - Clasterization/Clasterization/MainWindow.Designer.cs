@@ -39,17 +39,17 @@
             this.pictureBox_Result = new System.Windows.Forms.PictureBox();
             this.pictureBox_Base = new System.Windows.Forms.PictureBox();
             this.tabControl = new System.Windows.Forms.TabControl();
-            this.tabPage1_Classterize = new System.Windows.Forms.TabPage();
-            this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.tabPage2_Info = new System.Windows.Forms.TabPage();
+            this.tabPage_Info = new System.Windows.Forms.TabPage();
+            this.textBox_Info = new System.Windows.Forms.TextBox();
+            this.tabPage_Classterize = new System.Windows.Forms.TabPage();
+            this.textBox_Classterize = new System.Windows.Forms.TextBox();
             this.trackBar_Coeff = new System.Windows.Forms.TrackBar();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Result)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Base)).BeginInit();
             this.tabControl.SuspendLayout();
-            this.tabPage1_Classterize.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabPage_Info.SuspendLayout();
+            this.tabPage_Classterize.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_Coeff)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,7 +62,7 @@
             this.saveToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(783, 24);
+            this.menuStrip.Size = new System.Drawing.Size(865, 24);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "MenuStrip";
             // 
@@ -105,13 +105,13 @@
             // 
             this.zedGraphControl.Location = new System.Drawing.Point(0, 27);
             this.zedGraphControl.Name = "zedGraphControl";
-            this.zedGraphControl.ScrollGrace = 0;
-            this.zedGraphControl.ScrollMaxX = 0;
-            this.zedGraphControl.ScrollMaxY = 0;
-            this.zedGraphControl.ScrollMaxY2 = 0;
-            this.zedGraphControl.ScrollMinX = 0;
-            this.zedGraphControl.ScrollMinY = 0;
-            this.zedGraphControl.ScrollMinY2 = 0;
+            this.zedGraphControl.ScrollGrace = 0D;
+            this.zedGraphControl.ScrollMaxX = 0D;
+            this.zedGraphControl.ScrollMaxY = 0D;
+            this.zedGraphControl.ScrollMaxY2 = 0D;
+            this.zedGraphControl.ScrollMinX = 0D;
+            this.zedGraphControl.ScrollMinY = 0D;
+            this.zedGraphControl.ScrollMinY2 = 0D;
             this.zedGraphControl.Size = new System.Drawing.Size(190, 187);
             this.zedGraphControl.TabIndex = 2;
             // 
@@ -119,7 +119,7 @@
             // 
             this.pictureBox_Result.Location = new System.Drawing.Point(196, 27);
             this.pictureBox_Result.Name = "pictureBox_Result";
-            this.pictureBox_Result.Size = new System.Drawing.Size(344, 344);
+            this.pictureBox_Result.Size = new System.Drawing.Size(425, 344);
             this.pictureBox_Result.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox_Result.TabIndex = 3;
             this.pictureBox_Result.TabStop = false;
@@ -135,70 +135,71 @@
             // 
             // tabControl
             // 
-            this.tabControl.Controls.Add(this.tabPage1_Classterize);
-            this.tabControl.Controls.Add(this.tabPage2_Info);
-            this.tabControl.Location = new System.Drawing.Point(547, 28);
+            this.tabControl.Controls.Add(this.tabPage_Info);
+            this.tabControl.Controls.Add(this.tabPage_Classterize);
+            this.tabControl.Location = new System.Drawing.Point(627, 28);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(236, 343);
             this.tabControl.TabIndex = 5;
             // 
-            // tabPage1_Classterize
+            // tabPage_Info
             // 
-            this.tabPage1_Classterize.Controls.Add(this.label1);
-            this.tabPage1_Classterize.Controls.Add(this.pictureBox1);
-            this.tabPage1_Classterize.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1_Classterize.Name = "tabPage1_Classterize";
-            this.tabPage1_Classterize.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1_Classterize.Size = new System.Drawing.Size(228, 317);
-            this.tabPage1_Classterize.TabIndex = 0;
-            this.tabPage1_Classterize.Text = "tabPage1";
-            this.tabPage1_Classterize.UseVisualStyleBackColor = true;
+            this.tabPage_Info.Controls.Add(this.textBox_Info);
+            this.tabPage_Info.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Info.Name = "tabPage_Info";
+            this.tabPage_Info.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_Info.Size = new System.Drawing.Size(228, 317);
+            this.tabPage_Info.TabIndex = 0;
+            this.tabPage_Info.Text = "Info";
+            this.tabPage_Info.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // textBox_Info
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(42, 17);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 19);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "label1";
+            this.textBox_Info.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBox_Info.Location = new System.Drawing.Point(6, 6);
+            this.textBox_Info.Multiline = true;
+            this.textBox_Info.Name = "textBox_Info";
+            this.textBox_Info.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox_Info.Size = new System.Drawing.Size(214, 307);
+            this.textBox_Info.TabIndex = 0;
             // 
-            // pictureBox1
+            // tabPage_Classterize
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(6, 6);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(30, 30);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.tabPage_Classterize.Controls.Add(this.textBox_Classterize);
+            this.tabPage_Classterize.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_Classterize.Name = "tabPage_Classterize";
+            this.tabPage_Classterize.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_Classterize.Size = new System.Drawing.Size(228, 317);
+            this.tabPage_Classterize.TabIndex = 1;
+            this.tabPage_Classterize.Text = "Classterize";
+            this.tabPage_Classterize.UseVisualStyleBackColor = true;
             // 
-            // tabPage2_Info
+            // textBox_Classterize
             // 
-            this.tabPage2_Info.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2_Info.Name = "tabPage2_Info";
-            this.tabPage2_Info.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2_Info.Size = new System.Drawing.Size(228, 317);
-            this.tabPage2_Info.TabIndex = 1;
-            this.tabPage2_Info.Text = "tabPage2";
-            this.tabPage2_Info.UseVisualStyleBackColor = true;
+            this.textBox_Classterize.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBox_Classterize.Location = new System.Drawing.Point(6, 6);
+            this.textBox_Classterize.Multiline = true;
+            this.textBox_Classterize.Name = "textBox_Classterize";
+            this.textBox_Classterize.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox_Classterize.Size = new System.Drawing.Size(214, 305);
+            this.textBox_Classterize.TabIndex = 1;
             // 
             // trackBar_Coeff
             // 
-            this.trackBar_Coeff.Location = new System.Drawing.Point(547, 0);
+            this.trackBar_Coeff.Location = new System.Drawing.Point(627, -1);
             this.trackBar_Coeff.Maximum = 40;
             this.trackBar_Coeff.Name = "trackBar_Coeff";
             this.trackBar_Coeff.Size = new System.Drawing.Size(236, 45);
             this.trackBar_Coeff.TabIndex = 5;
             this.trackBar_Coeff.TickStyle = System.Windows.Forms.TickStyle.None;
             this.trackBar_Coeff.Value = 10;
-            this.trackBar_Coeff.MouseUp += new System.Windows.Forms.MouseEventHandler(this.trackBar_Coeff_MouseUp);
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(783, 375);
+            this.ClientSize = new System.Drawing.Size(865, 375);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.trackBar_Coeff);
             this.Controls.Add(this.zedGraphControl);
@@ -214,9 +215,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Result)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Base)).EndInit();
             this.tabControl.ResumeLayout(false);
-            this.tabPage1_Classterize.ResumeLayout(false);
-            this.tabPage1_Classterize.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabPage_Info.ResumeLayout(false);
+            this.tabPage_Info.PerformLayout();
+            this.tabPage_Classterize.ResumeLayout(false);
+            this.tabPage_Classterize.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_Coeff)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -233,12 +235,12 @@
         private System.Windows.Forms.PictureBox pictureBox_Result;
         private System.Windows.Forms.PictureBox pictureBox_Base;
         private System.Windows.Forms.TabControl tabControl;
-        private System.Windows.Forms.TabPage tabPage1_Classterize;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TabPage tabPage2_Info;
+        private System.Windows.Forms.TabPage tabPage_Info;
         private System.Windows.Forms.ToolStripMenuItem classterizeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.TrackBar trackBar_Coeff;
+        private System.Windows.Forms.TextBox textBox_Info;
+        private System.Windows.Forms.TabPage tabPage_Classterize;
+        private System.Windows.Forms.TextBox textBox_Classterize;
     }
 }

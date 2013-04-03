@@ -17,8 +17,16 @@ namespace Clasterization
         private Thread workerThread;
         private ImageProcessor imageProcessor;
         private int[,] baseImage;
+        private int[,] markOutImage;
+        private int[,] clasterizedImage;
+        
         private delegate void ReloadImageDelegate(Bitmap image);
-        private readonly ReloadImageDelegate reloadImage;
+        private readonly ReloadImageDelegate reloadImageDelegate;
+        private delegate void SetTextInfoDelegate(String text);
+        private readonly SetTextInfoDelegate setTextInfoDelegate;
+        private delegate void SetTextClasterizeDelegate(String text);
+        private readonly SetTextClasterizeDelegate setTextClasterizeDelegate;
+
 
 
         public MainWindow()
@@ -26,7 +34,9 @@ namespace Clasterization
             InitializeComponent();
 
             EnabledAllButtons(false);
-            reloadImage = new ReloadImageDelegate(ReloadImage);
+            reloadImageDelegate = new ReloadImageDelegate(ReloadImage);
+            setTextInfoDelegate = new SetTextInfoDelegate(SetTextInfo);
+            setTextClasterizeDelegate = new SetTextClasterizeDelegate(SetTextClasterize);
         }
         
         #region Events
@@ -109,14 +119,16 @@ namespace Clasterization
             {
                 case "Binarize":
                     imageProcessor.Image = imageProcessor.ToBlackWhitePixelArray(baseImage, 10);//trackBar_Coeff.Value);
-                    Invoke(reloadImage, imageProcessor.ToImage());
+                    Invoke(reloadImageDelegate, imageProcessor.ToImage());
                     imageProcessor.MedianFiter(null, 5);
-                    Invoke(reloadImage, imageProcessor.ToImage());
-                    imageProcessor.MarkOut(null);
+                    Invoke(reloadImageDelegate, imageProcessor.ToImage());
+                    markOutImage = imageProcessor.MarkOut(null);
+                    Invoke(reloadImageDelegate, imageProcessor.ToImage());
                     break;
                 case "Classterize":
-                    Invoke(reloadImage, imageProcessor.ToImage());
-                    imageProcessor.Clasterize(null);
+                    imageProcessor.Image = imageProcessor.Clasterize(markOutImage, 2);//trackBar_Coeff.Value);
+                    Invoke(reloadImageDelegate, imageProcessor.ToImage());
+                    ShowInfo();
                     break;
                 case "Save":
                     imageProcessor.ToImage().Save("out.jpg", ImageFormat.Jpeg);
@@ -125,9 +137,38 @@ namespace Clasterization
             EnabledAllButtons(true);
         }
 
+        public void ShowInfo()
+        {
+            var info = new StringBuilder();
+            foreach (var shape in imageProcessor.ShapeList)
+            {
+                info.Append(shape.ToString() + Environment.NewLine);
+            }
+            Invoke(setTextInfoDelegate, info.ToString());
+            info = new StringBuilder();
+            foreach (var claster in imageProcessor.ClasterList)
+            {
+                info.Append(claster.ToString() + Environment.NewLine);
+            }
+            Invoke(setTextClasterizeDelegate, info.ToString());
+        }
+        #endregion
+
+        #region Delegates
+
         private void ReloadImage(Bitmap image)
         {
             pictureBox_Result.Image = image as Image;
+        }
+
+        private void SetTextInfo(String text)
+        {
+            textBox_Info.Text = text;
+        }
+        
+        private void SetTextClasterize(String text)
+        {
+            textBox_Classterize.Text = text;
         }
         #endregion
     }
