@@ -16,9 +16,9 @@ namespace MultilayerPerceptron
     {
         #region Constants
 
-        private double aK = 5.0;
-        private double bK = 5.0;
-        private double dK = 0.001;
+        private double aK = 0.7;
+        private double bK = 0.7;
+        private double limitD = 0.01;
 
         #endregion
 
@@ -26,6 +26,7 @@ namespace MultilayerPerceptron
 
         private String[] fileNames;
         private int cycles = 0;
+        private Bitmap openedImage;
 
         private Thread worker;
         private delegate void UpdateProgressDelegate(int percent);
@@ -65,7 +66,7 @@ namespace MultilayerPerceptron
             {
                 worker.Abort();
             }
-            worker = new Thread(new ParameterizedThreadStart(TrainingNetwork))
+            worker = new Thread(new ThreadStart(Recognize))
                 {
                     Priority = ThreadPriority.Highest
                 };
@@ -76,9 +77,9 @@ namespace MultilayerPerceptron
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
             fileNames = (sender as OpenFileDialog).FileNames;
-            if (fileNames.Count() != 9) return;
+            //if (fileNames.Count() != 9) return;
 
-            var list = new List<String[]>(3);
+            var list = new List<String[]>();
             for (int i = 0; i < 3; i++)
             {
                 list.Add(fileNames.Skip(i * 3).Take(3).ToArray());
@@ -87,10 +88,31 @@ namespace MultilayerPerceptron
             worker.Start(list);
         }
 
+
         private void openImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            openFileDialog_OpenImage.ShowDialog();
         }
+
+        private void openFileDialog_OpenImage_FileOk(object sender, CancelEventArgs e)
+        {
+            var fileName = (sender as OpenFileDialog).FileName;
+            openedImage = Bitmap.FromFile(fileName) as Bitmap;
+            pictureBox.Image = openedImage;
+        }
+
+        private void recognizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (worker != null)
+            {
+                worker.Abort();
+            }
+            worker = new Thread(new ParameterizedThreadStart(TrainingNetwork))
+                {
+                    Priority = ThreadPriority.Highest
+                };
+        }
+
 
         private void trackBar_Noise_MouseUp(object sender, MouseEventArgs e)
         {
@@ -102,6 +124,7 @@ namespace MultilayerPerceptron
             textBox_Noise.Text = (sender as TrackBar).Value.ToString();
         }
 
+
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (worker != null)
@@ -112,6 +135,8 @@ namespace MultilayerPerceptron
         #endregion
 
         #region private methods
+
+        #region Learning
 
         private void TrainingNetwork(object param)
         {
@@ -125,29 +150,10 @@ namespace MultilayerPerceptron
             InitializeVariables(ref Q);
             InitializeVariables(ref T);
 
-            double Esum;
+            double Dmax;
             do
             {
-                #region old
-                //// Counting outputs.
-                //var g = new List<double[]>(imageCount);
-                //var y = new List<double[]>(imageCount);
-                //for (int index = 0; index < imageCount; index++)
-                //{
-                //    var x = images[index]; // Get image.
-                //    g.Add(CountingLayer(x, v, Q, h)); // Use n -> h.
-                //    y.Add(CountingLayer(g, w, T, m)); // Use h -> m.
-                //}
-
-                //// Counting OUTPUT layer.
-                //var d = GetOutputErrors(y, classCount);
-                //ChangeWeight(w, aK, );
-
-                //// Counting HIDE layer.
-                #endregion
-
-
-                var errorList = new List<double[]>();
+                Dmax = 0;
                 foreach (var list in imageList)
                 {
                     foreach (var image in list.Images)
@@ -158,7 +164,8 @@ namespace MultilayerPerceptron
 
                         // Counting OUTPUT layer.
                         var d = GetOutputError(y, list.Clas);
-                        errorList.Add(d);
+                        Dmax = GetMaxError(d);
+                        
                         ChangeWeight(ref w, aK, y, d, g, h, m);
                         ChangeThreshold(ref T, aK, y, d, m);
 
@@ -168,23 +175,18 @@ namespace MultilayerPerceptron
                         ChangeThreshold(ref Q, bK, g, e, h);
                     }
                 }
-                Esum = errorList.Sum(error => error.Sum()) / 4;  // Counting overall error.
-                if (Math.Abs(Esum) < 2.5)
-                {
-                    aK = bK = 2.0;
-                }
 
-                if (++cycle % 200 == 0)
+                if (++cycle % 10 == 0)
                 {
+                    if (Dmax < 0.011) aK = bK = 0.5;
+
                     using (var writer = new StreamWriter("log.txt", true))
                     {
-                        writer.WriteLine(String.Format("{0}\t{1}", cycle, Esum));
+                        writer.WriteLine(String.Format("{0}\t{1}\t{2}", cycle, Dmax, aK));
                     }
-
-                    Invoke(updateProgressDelegate, (int)(dK * 100.0 / Esum));
                     Invoke(updateProgressDelegate, cycle);
                 }
-            } while (Math.Abs(Esum) > dK);
+            } while (Dmax > limitD);
 
             Invoke(updateProgressDelegate, cycle);
         }
@@ -230,14 +232,13 @@ namespace MultilayerPerceptron
 
         private void InitializeVariables(ref double[] array)
         {
-            var random = new Random();
+            var random = new Random(array.Length);
             for (int i = 0; i < array.Length; i++)
             {
                 array[i] = random.Next(100) / 1000.0;
             }
         }
-
-
+        
         #region Counting Layer
 
         private double[] CountingLayer(double[] input, double[] weight, double[] threshold, int jj)
@@ -250,9 +251,9 @@ namespace MultilayerPerceptron
                 double d = 0;
                 for (int i = 0; i < ii; i++)
                 {
-                    d += weight[j * ii + i] * input[i] + threshold[j];
+                    d += weight[j * ii + i] * input[i];
                 }
-                output[j] = ActivateFunc(d);
+                output[j] = ActivateFunc(d + threshold[j]);
             }
 
             return output;
@@ -263,25 +264,21 @@ namespace MultilayerPerceptron
             return 1.0 / (1.0 + Math.Exp(-d));
         }
 
+        private double GetMaxError(double[] errors)
+        {
+            double Dmax = 0;
 
-        //private double[,] GetOutputErrors(List<double[]> layers, int classCount)
-        //{
-        //    var errors = new double[classCount, m];
+            if (Dmax < errors.Max())
+            {
+                Dmax = errors.Max();
+            }
+            if (Dmax < Math.Abs(errors.Min()))
+            {
+                Dmax = Math.Abs(errors.Min());
+            }
 
-        //    for (int clas = 0; clas < classCount; clas++)
-        //    {
-        //        for (int j = 0; j < layers.Count() / classCount; j++)
-        //        {
-        //            for (int i = 0; i < m; i++)
-        //            {
-        //                double yk = (clas == i) ? 1.0 : 0.0;
-        //                errors[clas, i] += (yk - layers[clas * classCount + j][i]) / m;
-        //            }
-        //        }
-        //    }
-            
-        //    return errors;
-        //}
+            return Dmax;
+        }
 
         private double[] GetOutputError(double[] layer, int clas)
         {
@@ -290,7 +287,7 @@ namespace MultilayerPerceptron
             for (int k = 0; k < m; k++)
             {
                 double y = (clas == k) ? 1.0 : 0.0;
-                errors[k] = (y - layer[k]);
+                errors[k] = y - layer[k];
             }
 
             return errors;
@@ -319,7 +316,7 @@ namespace MultilayerPerceptron
                 for (int k = 0; k < kk; k++)
                 {
                     double z = layer[k];
-                    weight[j * kk + k] += coef * z * (1 - z) * error[k] * prevLayer[k];
+                    weight[j * kk + k] += coef * z * (1 - z) * error[k] * prevLayer[j];
                 }
             }
         }
@@ -335,18 +332,26 @@ namespace MultilayerPerceptron
 
         #endregion
 
+        #endregion
+
+        private void Recognize()
+        {
+            //
+        }
+
+        private void SetNoise(int percent)
+        {
+            for (int i = 0; i < UPPER; i++)
+            {
+                
+            }
+        }
+
 
         private void UpdateProgress(int percent)
         {
-            if (percent <= 100)
-            {
-                progressBar.Value = percent;
-            }
-            else
-            {
-                cycles = percent;
-                label_Cycles.Text = cycles.ToString();
-            }
+            cycles = percent;
+            label_Cycles.Text = cycles.ToString();
         }
 
         #endregion

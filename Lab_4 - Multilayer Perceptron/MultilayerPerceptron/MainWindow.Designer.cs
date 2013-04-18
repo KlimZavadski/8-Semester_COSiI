@@ -44,6 +44,8 @@
             this.pictureBox_Class3 = new System.Windows.Forms.PictureBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.label_Cycles = new System.Windows.Forms.Label();
+            this.openFileDialog_OpenImage = new System.Windows.Forms.OpenFileDialog();
+            this.recognizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_Noise)).BeginInit();
@@ -71,7 +73,8 @@
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.trainingToolStripMenuItem,
-            this.openImageToolStripMenuItem});
+            this.openImageToolStripMenuItem,
+            this.recognizeToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(351, 24);
@@ -182,6 +185,20 @@
             this.label_Cycles.Size = new System.Drawing.Size(0, 17);
             this.label_Cycles.TabIndex = 14;
             // 
+            // openFileDialog_OpenImage
+            // 
+            this.openFileDialog_OpenImage.Filter = "Image|*.jpg";
+            this.openFileDialog_OpenImage.FilterIndex = 0;
+            this.openFileDialog_OpenImage.InitialDirectory = "c:\\Users\\k.zavadsky\\Dropbox\\University\\ЦОСиИ\\Images\\liters\\";
+            this.openFileDialog_OpenImage.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog_OpenImage_FileOk);
+            // 
+            // recognizeToolStripMenuItem
+            // 
+            this.recognizeToolStripMenuItem.Name = "recognizeToolStripMenuItem";
+            this.recognizeToolStripMenuItem.Size = new System.Drawing.Size(73, 20);
+            this.recognizeToolStripMenuItem.Text = "Recognize";
+            this.recognizeToolStripMenuItem.Click += new System.EventHandler(this.recognizeToolStripMenuItem_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -234,6 +251,8 @@
         private System.Windows.Forms.PictureBox pictureBox_Class3;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label label_Cycles;
+        private System.Windows.Forms.OpenFileDialog openFileDialog_OpenImage;
+        private System.Windows.Forms.ToolStripMenuItem recognizeToolStripMenuItem;
     }
 }
 
